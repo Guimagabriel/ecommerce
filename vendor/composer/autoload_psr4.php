@@ -6,9 +6,13 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'VirtualStore\\' => array($baseDir . '/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/src'),
+    'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'League\\Plates\\' => array($vendorDir . '/league/plates/src'),
+    'Laravel\\SerializableClosure\\' => array($vendorDir . '/laravel/serializable-closure/src'),
+    'Invoker\\' => array($vendorDir . '/php-di/invoker/src'),
     'FastRoute\\' => array($vendorDir . '/nikic/fast-route/src'),
-    '' => array($vendorDir . '/php-classes/src'),
+    'DI\\' => array($vendorDir . '/php-di/php-di/src'),
 );

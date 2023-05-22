@@ -1,6 +1,8 @@
 FastRoute - Fast request router for PHP
 =======================================
 
+[![Build Status](https://img.shields.io/github/actions/workflow/status/nikic/FastRoute/phpunit.yml?branch=master&style=flat-square)](https://github.com/nikic/FastRoute/actions?query=workflow%3A%22PHPUnit%20Tests%22+branch%3Amaster)
+
 This library provides a fast implementation of a regular expression based router. [Blog post explaining how the
 implementation works and why it is fast.][blog_post]
 
@@ -13,7 +15,7 @@ To install with composer:
 composer require nikic/fast-route
 ```
 
-Requires PHP 5.4 or newer.
+Requires PHP 7.4 or newer.
 
 Usage
 -----
@@ -122,7 +124,7 @@ The `$handler` parameter does not necessarily have to be a callback, it could al
 class name or any other kind of data you wish to associate with the route. FastRoute only tells you
 which handler corresponds to your URI, how you interpret it is up to you.
 
-#### Shorcut methods for common request methods
+#### Shortcut methods for common request methods
 
 For the `GET`, `POST`, `PUT`, `PATCH`, `DELETE` and `HEAD` request methods shortcut methods are available. For example:
 
@@ -275,13 +277,13 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     /* ... */
 }, [
     'routeParser' => 'FastRoute\\RouteParser\\Std',
-    'dataGenerator' => 'FastRoute\\DataGenerator\\GroupCountBased',
-    'dispatcher' => 'FastRoute\\Dispatcher\\GroupCountBased',
+    'dataGenerator' => 'FastRoute\\DataGenerator\\MarkBased',
+    'dispatcher' => 'FastRoute\\Dispatcher\\MarkBased',
 ]);
 ```
 
-The above options array corresponds to the defaults. By replacing `GroupCountBased` by
-`GroupPosBased` you could switch to a different dispatching strategy.
+The above options array corresponds to the defaults. By replacing `MarkBased` with
+`GroupCountBased` you could switch to a different dispatching strategy.
 
 ### A Note on HEAD Requests
 

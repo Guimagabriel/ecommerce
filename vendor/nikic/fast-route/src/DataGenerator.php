@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace FastRoute;
 
@@ -12,15 +13,16 @@ interface DataGenerator
      * can be arbitrary data that will be returned when the route
      * matches.
      *
-     * @param string $httpMethod
-     * @param array $routeData
-     * @param mixed $handler
+     * @param mixed[] $routeData
+     * @param mixed   $handler
      */
-    public function addRoute($httpMethod, $routeData, $handler);
+    public function addRoute(string $httpMethod, array $routeData, $handler): void;
 
     /**
      * Returns dispatcher data in some unspecified format, which
      * depends on the used method of dispatch.
+     *
+     * @return array{0: array<string, array<string, mixed>>, 1: array<string, array<array{regex: string, suffix?: string, routeMap: array<int|string, array{0: mixed, 1: array<string, string>}>}>>}
      */
-    public function getData();
+    public function getData(): array;
 }

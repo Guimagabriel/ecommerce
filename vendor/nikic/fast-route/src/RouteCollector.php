@@ -1,29 +1,20 @@
 <?php
+declare(strict_types=1);
 
 namespace FastRoute;
 
 class RouteCollector
 {
-    /** @var RouteParser */
-    protected $routeParser;
+    protected RouteParser $routeParser;
 
-    /** @var DataGenerator */
-    protected $dataGenerator;
+    protected DataGenerator $dataGenerator;
 
-    /** @var string */
-    protected $currentGroupPrefix;
+    protected string $currentGroupPrefix = '';
 
-    /**
-     * Constructs a route collector.
-     *
-     * @param RouteParser   $routeParser
-     * @param DataGenerator $dataGenerator
-     */
     public function __construct(RouteParser $routeParser, DataGenerator $dataGenerator)
     {
         $this->routeParser = $routeParser;
         $this->dataGenerator = $dataGenerator;
-        $this->currentGroupPrefix = '';
     }
 
     /**
@@ -32,10 +23,9 @@ class RouteCollector
      * The syntax used in the $route string depends on the used route parser.
      *
      * @param string|string[] $httpMethod
-     * @param string $route
-     * @param mixed  $handler
+     * @param mixed           $handler
      */
-    public function addRoute($httpMethod, $route, $handler)
+    public function addRoute($httpMethod, string $route, $handler): void
     {
         $route = $this->currentGroupPrefix . $route;
         $routeDatas = $this->routeParser->parse($route);
@@ -50,11 +40,8 @@ class RouteCollector
      * Create a route group with a common prefix.
      *
      * All routes created in the passed callback will have the given group prefix prepended.
-     *
-     * @param string $prefix
-     * @param callable $callback
      */
-    public function addGroup($prefix, callable $callback)
+    public function addGroup(string $prefix, callable $callback): void
     {
         $previousGroupPrefix = $this->currentGroupPrefix;
         $this->currentGroupPrefix = $previousGroupPrefix . $prefix;
@@ -63,66 +50,73 @@ class RouteCollector
     }
 
     /**
+     * Adds a fallback route to the collection
+     *
+     * This is simply an alias of $this->addRoute('*', $route, $handler)
+     *
+     * @param mixed $handler
+     */
+    public function any(string $route, $handler): void
+    {
+        $this->addRoute('*', $route, $handler);
+    }
+
+    /**
      * Adds a GET route to the collection
-     * 
+     *
      * This is simply an alias of $this->addRoute('GET', $route, $handler)
      *
-     * @param string $route
-     * @param mixed  $handler
+     * @param mixed $handler
      */
-    public function get($route, $handler)
+    public function get(string $route, $handler): void
     {
         $this->addRoute('GET', $route, $handler);
     }
 
     /**
      * Adds a POST route to the collection
-     * 
+     *
      * This is simply an alias of $this->addRoute('POST', $route, $handler)
      *
-     * @param string $route
-     * @param mixed  $handler
+     * @param mixed $handler
      */
-    public function post($route, $handler)
+    public function post(string $route, $handler): void
     {
         $this->addRoute('POST', $route, $handler);
     }
 
     /**
      * Adds a PUT route to the collection
-     * 
+     *
      * This is simply an alias of $this->addRoute('PUT', $route, $handler)
      *
-     * @param string $route
-     * @param mixed  $handler
+     * @param mixed $handler
      */
-    public function put($route, $handler)
+    public function put(string $route, $handler): void
     {
         $this->addRoute('PUT', $route, $handler);
     }
 
     /**
      * Adds a DELETE route to the collection
-     * 
+     *
      * This is simply an alias of $this->addRoute('DELETE', $route, $handler)
      *
-     * @param string $route
-     * @param mixed  $handler
+     * @param mixed $handler
      */
-    public function delete($route, $handler)
+    public function delete(string $route, $handler): void
     {
         $this->addRoute('DELETE', $route, $handler);
     }
 
     /**
      * Adds a PATCH route to the collection
-     * 
+     *
      * This is simply an alias of $this->addRoute('PATCH', $route, $handler)
      *
-     * @param string $route
-     * @param mixed  $handler
+     * @param mixed $handler
      */
-    public function patch($route, $handler)
+    public function patch(string $route, $handler): void
     {
         $this->addRoute('PATCH', $route, $handler);
     }
@@ -132,20 +126,31 @@ class RouteCollector
      *
      * This is simply an alias of $this->addRoute('HEAD', $route, $handler)
      *
-     * @param string $route
-     * @param mixed  $handler
+     * @param mixed $handler
      */
-    public function head($route, $handler)
+    public function head(string $route, $handler): void
     {
         $this->addRoute('HEAD', $route, $handler);
     }
 
     /**
+     * Adds an OPTIONS route to the collection
+     *
+     * This is simply an alias of $this->addRoute('OPTIONS', $route, $handler)
+     *
+     * @param mixed $handler
+     */
+    public function options(string $route, $handler): void
+    {
+        $this->addRoute('OPTIONS', $route, $handler);
+    }
+
+    /**
      * Returns the collected route data, as provided by the data generator.
      *
-     * @return array
+     * @return array{0: array<string, array<string, mixed>>, 1: array<string, array<array{regex: string, suffix?: string, routeMap: array<int|string, array{0: mixed, 1: array<string, string>}>}>>}
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->dataGenerator->getData();
     }
