@@ -17,13 +17,13 @@ class PageAdmin
 
   }
 
-  public function renderPage($name)
+  public function renderPage(string $name, array $data = [])
   {
     if ($this->options == true) {
       echo $this->templates->render('header');
     }
 
-    echo $this->templates->render($name);
+    echo $this->templates->render($name, $data);
   }
 
   public function __destruct()
@@ -37,6 +37,7 @@ class PageAdmin
   {
     $this->options = $options;
   }
+
 
 }
 

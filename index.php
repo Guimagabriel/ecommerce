@@ -9,6 +9,15 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/admin/login', 'renderLoginAdmin');
     $r->addRoute('POST', '/admin/login', 'renderLogin');
     $r->addRoute('GET', '/admin/logout', 'logout');
+    $r->addRoute('GET', '/admin/users', 'adminUsers');
+    $r->addRoute('GET', '/admin/users/create', 'adminUsersCreate');
+    $r->addRoute('POST', '/admin/users/create', 'adminPostUsersCreate');
+    $r->addRoute('GET', '/admin/users/{iduser}', 'adminUsersUpdate');
+    $r->addRoute('POST', '/admin/users/{iduser}', 'adminPostUsersUpdate');
+    $r->addRoute('GET', '/admin/users/{iduser}/delete', 'adminUsersDelete');
+    $r->addRoute('GET', '/admin/forgot', 'adminForgot');
+    $r->addRoute('POST', '/admin/forgot', 'adminPostForgot');
+    
 });
 
 $httpMethod = $_SERVER['REQUEST_METHOD'];
@@ -43,8 +52,7 @@ function renderIndex($vars, $container)
 
 function renderIndexAdmin($vars, $container)
 {
-    $user = $container->get(VirtualStore\Models\User::class);
-    $user->verifyLogin();
+    VirtualStore\Models\User::verifyLogin();
     $page = $container->get(VirtualStore\PageAdmin::class);
     $page->renderPage('index');
 }
@@ -67,9 +75,80 @@ function renderLogin($vars, $container)
 
 function logout($vars, $container)
 {
-    $user = $container->get(VirtualStore\Models\User::class);
-    $user->logout();
+    VirtualStore\Models\User::logout();
 
     header('Location: /admin/login');
     exit;
+}
+
+function adminUsers($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin();
+    $vars['users'] = VirtualStore\Models\User::listAll();
+    $page = $container->get(VirtualStore\PageAdmin::class);
+    $page->renderPage('users', $vars);
+}
+
+function adminUsersCreate($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin();
+    $page = $container->get(VirtualStore\PageAdmin::class);
+    $page->renderPage('users-create');
+}
+
+function adminUsersUpdate($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin();
+    $user = $container->get(VirtualStore\Models\User::class);
+    $user->get((int)$vars['iduser']);
+    $page = $container->get(VirtualStore\PageAdmin::class);
+    $page->renderPage('users-update', ["user" => $user->getValues()]);
+}
+
+function adminPostUsersCreate($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin();
+    $user = $container->get(VirtualStore\Models\User::class);
+    $_POST["inadmin"] = (isset($_POST["inadmin"]))?1:0;
+    $user->setData($_POST);
+    $user->save();
+
+    header("Location: /admin/users");
+    exit;
+}
+
+function adminPostUsersUpdate($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin();
+    $user = $container->get(VirtualStore\Models\User::class);
+    $_POST["inadmin"] = (isset($_POST["inadmin"]))?1:0;
+    $user->get((int)$vars['iduser']);
+    $user->setData($_POST);
+    $user->update();
+
+    header("Location: /admin/users");
+    exit;
+}
+
+function adminUsersDelete($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin();
+    $user = $container->get(VirtualStore\Models\User::class);
+    $user->get((int)$vars['iduser']);
+    $user->delete();
+
+    header("Location: /admin/users");
+    exit;
+}
+
+function adminForgot($vars, $container)
+{
+    $page = $container->get(VirtualStore\PageAdmin::class);
+    $page->setOptions(false);
+    $page->renderPage('forgot');
+}
+
+function adminPostForgot($vars, $container)
+{
+    $user = VirtualStore\Models\User::getForgot($_POST['email']);
 }
