@@ -32,16 +32,16 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {loop="$categories"}
+                  <?php foreach ($categories as $category): ?>
                   <tr>
-                    <td>{$value.idcategory}</td>
-                    <td>{$value.descategory}</td>
+                    <td><?php echo $category['idcategory'];?></td>
+                    <td><?php echo $category['descategory']; ?></td>
                     <td>
-                      <a href="/admin/categories/{$value.idcategory}" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> Editar</a>
-                      <a href="/admin/categories/{$value.idcategory}/delete" onclick="return confirm('Deseja realmente excluir este registro?')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Excluir</a>
+                      <a href="/admin/categories/<?= $category['idcategory']?>" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> Editar</a>
+                      <a href="/admin/categories/<?= $category['idcategory']?>/delete" onclick="return confirm('Deseja realmente excluir este registro?')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Excluir</a>
                     </td>
                   </tr>
-                  {/loop}
+                  <?php endforeach; ?>
                 </tbody>
               </table>
             </div>

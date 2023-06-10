@@ -14,9 +14,15 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('POST', '/admin/users/create', 'adminPostUsersCreate');
     $r->addRoute('GET', '/admin/users/{iduser}', 'adminUsersUpdate');
     $r->addRoute('POST', '/admin/users/{iduser}', 'adminPostUsersUpdate');
-    $r->addRoute('GET', '/admin/users/{iduser}/delete', 'adminUsersDelete');
+    $r->addRoute('GET', '/admin/users/{iduser}/delete', 'adminDeleteUsers');
     $r->addRoute('GET', '/admin/forgot', 'adminForgot');
     $r->addRoute('POST', '/admin/forgot', 'adminPostForgot');
+    $r->addRoute('GET', '/admin/categories', 'adminCategories');
+    $r->addRoute('GET', '/admin/categories/create', 'adminCategoriesCreate');
+    $r->addRoute('POST', '/admin/categories/create', 'adminPostCategoriesCreate');
+    $r->addRoute('GET', '/admin/categories/{idcategory}/delete', 'adminDeleteCategories');
+    $r->addRoute('GET', '/admin/categories/{idcategory}', 'adminCategoriesUpdate');
+    $r->addRoute('POST', '/admin/categories/{idcategory}', 'adminPostCategoriesUpdate');
     
 });
 
@@ -130,7 +136,7 @@ function adminPostUsersUpdate($vars, $container)
     exit;
 }
 
-function adminUsersDelete($vars, $container)
+function adminDeleteUsers($vars, $container)
 {
     VirtualStore\Models\User::verifyLogin();
     $user = $container->get(VirtualStore\Models\User::class);
@@ -151,4 +157,63 @@ function adminForgot($vars, $container)
 function adminPostForgot($vars, $container)
 {
     $user = VirtualStore\Models\User::getForgot($_POST['email']);
+}
+
+function adminCategories($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin();
+    $category = $container->get(VirtualStore\Models\Category::class);
+    $vars['categories'] = $category->listAll();
+    $page = $container->get(VirtualStore\PageAdmin::class);
+    $page->renderPage('categories', $vars);
+}
+
+function adminCategoriesCreate($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin();
+    $page = $container->get(VirtualStore\PageAdmin::class);
+    $page->renderPage('categories-create');
+}
+
+function adminPostCategoriesCreate($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin();
+    $category = $container->get(VirtualStore\Models\Category::class);
+    $category->setData($_POST);
+    $category->save();
+    
+    header("Location: /admin/categories");
+    exit;
+}
+
+function adminDeleteCategories($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin();
+    $category = $container->get(VirtualStore\Models\Category::class);
+    $category->get((int) $vars['idcategory']);
+    $category->delete();
+
+    header("Location: /admin/categories");
+    exit;
+}
+
+function adminCategoriesUpdate($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin();
+    $category = $container->get(VirtualStore\Models\Category::class);
+    $category->get((int) $vars['idcategory']);
+    $page = $container->get(VirtualStore\PageAdmin::class);
+    $page->renderPage('categories-update', ['category' => $category->getValues()]);
+}
+
+function adminPostCategoriesUpdate($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin();
+    $category = $container->get(VirtualStore\Models\Category::class);
+    $category->get((int) $vars['idcategory']);
+    $category->setData($_POST);
+    $category->save();
+
+    header("Location: /admin/categories");
+    exit;
 }
