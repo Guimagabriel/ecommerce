@@ -16,9 +16,9 @@ class Page
     echo $this->templates->render('header');
   }
 
-  public function renderPage($name)
+  public function renderPage($name, array $data = [])
   {    
-    echo $this->templates->render($name);
+    echo $this->templates->render($name, $data);
   }
 
   public function __destruct()

@@ -107,7 +107,14 @@
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="#">Home</a></li>
                         <li><a href="#">Produtos</a></li>
+                        <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Categorias <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <?php include("./views/categories-menu.php"); ?>
+                        </ul>
+                        </li>
                         <li><a href="#">Carrinho</a></li>
+                        
                     </ul>
                 </div>  
             </div>

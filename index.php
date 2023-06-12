@@ -23,6 +23,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/admin/categories/{idcategory}/delete', 'adminDeleteCategories');
     $r->addRoute('GET', '/admin/categories/{idcategory}', 'adminCategoriesUpdate');
     $r->addRoute('POST', '/admin/categories/{idcategory}', 'adminPostCategoriesUpdate');
+    $r->addRoute('GET', '/category/{idcategory}', 'category');
     
 });
 
@@ -216,4 +217,13 @@ function adminPostCategoriesUpdate($vars, $container)
 
     header("Location: /admin/categories");
     exit;
+}
+
+function category($vars, $container)
+{
+    $category = $container->get(VirtualStore\Models\Category::class);
+    $category->get((int) $vars['idcategory']);
+    $page = $container->get(VirtualStore\Page::class);
+    $page->renderPage('category', ['category' => $category->getValues(), 'products' => []]);
+
 }
