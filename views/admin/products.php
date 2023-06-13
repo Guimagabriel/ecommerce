@@ -37,21 +37,21 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {loop="$products"}
+                  <?php foreach ($products as $product): ?>
                   <tr>
-                    <td>{$value.idproduct}</td>
-                    <td>{$value.desproduct}</td>
-                    <td>{$value.vlprice}</td>
-                    <td>{$value.vlwidth}</td>
-                    <td>{$value.vlheight}</td>
-                    <td>{$value.vllength}</td>
-                    <td>{$value.vlweight}</td>
+                    <td><?php echo $product['idproduct']; ?></td>
+                    <td><?php echo $product['desproduct']; ?></td>
+                    <td><?php echo $product['vlprice']; ?></td>
+                    <td><?php echo $product['vlwidth']; ?></td>
+                    <td><?php echo $product['vlheight']; ?></td>
+                    <td><?php echo $product['vllength']; ?></td>
+                    <td><?php echo $product['vlweight'] ;?></td>
                     <td>
-                      <a href="/admin/products/{$value.idproduct}" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> Editar</a>
-                      <a href="/admin/products/{$value.idproduct}/delete" onclick="return confirm('Deseja realmente excluir este registro?')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Excluir</a>
+                      <a href="/admin/products/<?= $product['idproduct']?>" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> Editar</a>
+                      <a href="/admin/products/<?= $product['idproduct']?>/delete" onclick="return confirm('Deseja realmente excluir este registro?')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Excluir</a>
                     </td>
                   </tr>
-                  {/loop}
+                  <?php endforeach; ?>
                 </tbody>
               </table>
             </div>

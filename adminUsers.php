@@ -1,18 +1,18 @@
 <?php
 
-  use VirtualStore\Models\User;
-  use VirtualStore\PageAdmin;
+use VirtualStore\Models\User;
+use VirtualStore\PageAdmin;
 
 
-  function adminUsers($vars, $container)
-  {
-      VirtualStore\Models\User::verifyLogin();
-      $vars['users'] = VirtualStore\Models\User::listAll();
-      $page = $container->get(VirtualStore\PageAdmin::class);
-      $page->renderPage('users', $vars);
-  }
+function adminUsers($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin();
+    $vars['users'] = VirtualStore\Models\User::listAll();
+    $page = $container->get(VirtualStore\PageAdmin::class);
+    $page->renderPage('users', $vars);
+}
 
-  function adminUsersCreate($vars, $container)
+function adminUsersCreate($vars, $container)
 {
     VirtualStore\Models\User::verifyLogin();
     $page = $container->get(VirtualStore\PageAdmin::class);

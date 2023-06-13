@@ -127,9 +127,6 @@ class User extends Model
         $dataRecovery = $res[0];
       }
     }
-  
   }
-
-
 
 }

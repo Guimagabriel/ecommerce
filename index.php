@@ -2,11 +2,6 @@
 
 session_start();
 require_once ("dependencies.php");
-require_once ("site.php");
-require_once ("siteAdmin.php");
-require_once ("adminUsers.php");
-require_once ("adminCategories.php");
-require_once ("adminForgot.php");
 
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/', 'renderIndex');
@@ -29,6 +24,13 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/admin/categories/{idcategory}', 'adminCategoriesUpdate');
     $r->addRoute('POST', '/admin/categories/{idcategory}', 'adminPostCategoriesUpdate');
     $r->addRoute('GET', '/category/{idcategory}', 'category');
+    $r->addRoute('GET', '/admin/products', 'adminProducts');
+    $r->addRoute('GET', '/admin/products/create', 'adminProductsCreate');
+    $r->addRoute('POST', '/admin/products/create', 'adminPostProductsCreate');
+    $r->addRoute('GET', '/admin/products/{idproduct}', 'adminProductsUpdate');
+    $r->addRoute('POST', '/admin/products/{idproduct}', 'adminPostProductsUpdate');
+    $r->addRoute('GET', '/admin/products/{idproduct}/delete', 'adminDeleteProducts');
+    
     
 });
 

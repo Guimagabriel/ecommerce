@@ -22,7 +22,7 @@
           <div class="box-body">
             <div class="form-group">
               <label for="desperson">Nome</label>
-              <input type="text" class="form-control" id="desperson" name="desperson" placeholder="Digite o nome" value=<?php echo $user['desperson'];?>>
+              <input type="text" class="form-control" id="desperson" name="desperson" placeholder="Digite o nome" value="<?php echo $user['desperson'];?>">
             </div>
             <div class="form-group">
               <label for="deslogin">Login</label>
