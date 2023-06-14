@@ -84,23 +84,23 @@
                     <div class="latest-product">
                         <h2 class="section-title">Produtos</h2>
                         <div class="product-carousel">
-                            {loop="$products}
+                            <?php foreach ($products as $product): ?>
                             <div class="single-product">
                                 <div class="product-f-image">
-                                    <img src="{$values.desphoto}" alt="">
+                                    <img src=<?php echo $product['desphoto']; ?> alt="">
                                     <div class="product-hover">
                                         <a href="#" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Comprar</a>
-                                        <a href="/products/{$values.desurl}" class="view-details-link"><i class="fa fa-link"></i> Ver Detalhes</a>
+                                        <a href="/products/<?=$product['desurl']?>" class="view-details-link"><i class="fa fa-link"></i> Ver Detalhes</a>
                                     </div>
                                 </div>
                                 
-                                <h2><a href="/products/{$values.desurl}">{$values.desproduct}</a></h2>
+                                <h2><a href="/products/<?=$product['desurl']?>"><?=$product['desproduct']?></a></h2>
                                 
                                 <div class="product-carousel-price">
-                                    <ins>R${$values.vlprice}</ins>
+                                    <ins>R$<?php echo formatPrice($product['vlprice']);?></ins>
                                 </div>
                             </div>
-                            {/loop}
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>

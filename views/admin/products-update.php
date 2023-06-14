@@ -45,6 +45,10 @@
               <input type="number" class="form-control" id="vlweight" name="vlweight" step="0.01" placeholder="0.00" value="<?php echo $product['vlweight']; ?>">
             </div>
             <div class="form-group">
+              <label for="desurl">Url</label>
+              <input type="text" class="form-control" id="desurl" name="desurl" value="<?php echo $product['desurl']; ?>">
+            </div>
+            <div class="form-group">
               <label for="file">Foto</label>
               <input type="file" class="form-control" id="file" name="file">
               <div class="box box-widget">

@@ -5,8 +5,9 @@ use VirtualStore\Models\Category;
 
 function renderIndex($vars, $container)
 {
+    $vars['products'] = VirtualStore\Models\Product::listAll();
     $page = $container->get(VirtualStore\Page::class);
-    $page->renderPage('index');
+    $page->renderPage('index', ['products' => VirtualStore\Models\Product::checkList($vars['products'])]);
 }
 
 function category($vars, $container)

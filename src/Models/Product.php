@@ -7,10 +7,23 @@ use VirtualStore\Sql;
 class Product extends Model
 {
   public static function listAll()
-    {
-      $sql = new Sql();
-      return $sql->select("SELECT * FROM tb_products ORDER BY desproduct");
+  {
+    $sql = new Sql();
+    return $sql->select("SELECT * FROM tb_products ORDER BY desproduct");
+  }
+
+  public static function checkList(array $list)
+  {
+    foreach($list as &$row) {
+
+      $p = new Product();
+      $p->setData($row);
+      $row = $p->getValues();
+
     }
+    
+    return $list;
+  }
 
   public function save()
   {
@@ -30,7 +43,7 @@ class Product extends Model
     
   }
 
-  public function get($idproduct) {
+  public function get(int $idproduct) {
     $sql = new Sql();
     $results = $sql->select("SELECT * FROM tb_products WHERE idproduct = :idproduct", [
       ":idproduct"=>$idproduct
@@ -66,7 +79,7 @@ class Product extends Model
       
       }
 
-      return $this->setdesphoto($url);
+    return $this->setdesphoto($url);
 
   }
 
@@ -96,6 +109,10 @@ class Product extends Model
 
       case 'png':
         $image = imagecreatefrompng($file['tmp_name']);
+      break;
+
+      case 'webp':
+        $image = imagecreatefromwebp($file['tmp_name']);
       break;
     }
 
