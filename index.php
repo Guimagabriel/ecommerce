@@ -23,6 +23,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/admin/categories/{idcategory}/delete', 'adminDeleteCategories');
     $r->addRoute('GET', '/admin/categories/{idcategory}', 'adminCategoriesUpdate');
     $r->addRoute('POST', '/admin/categories/{idcategory}', 'adminPostCategoriesUpdate');
+    $r->addRoute('GET', '/admin/categories/{idcategory}/products', 'adminCategoriesProducts');
     $r->addRoute('GET', '/category/{idcategory}', 'category');
     $r->addRoute('GET', '/admin/products', 'adminProducts');
     $r->addRoute('GET', '/admin/products/create', 'adminProductsCreate');

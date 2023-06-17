@@ -1,8 +1,5 @@
 <?php
 
-use VirtualStore\Page;
-use VirtualStore\Models\Category;
-
 function renderIndex($vars, $container)
 {
     $vars['products'] = VirtualStore\Models\Product::listAll();

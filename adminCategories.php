@@ -1,9 +1,5 @@
 <?php
 
-use VirtualStore\Models\Category;
-use VirtualStore\Models\User;
-use VirtualStore\PageAdmin;
-
 function adminCategories($vars, $container)
 {
     VirtualStore\Models\User::verifyLogin();
@@ -61,4 +57,13 @@ function adminPostCategoriesUpdate($vars, $container)
 
     header("Location: /admin/categories");
     exit;
+}
+
+function adminCategoriesProducts($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin();
+    $category = $container->get(VirtualStore\Models\Category::class);
+    $category->get((int) $vars['idcategory']);
+    $page = $container->get(VirtualStore\PageAdmin::class);
+    $page->renderPage('categories-products', ['category'=>$category->getValues(), 'productsRelated'=>[], 'productsNotRelated'=>[]]);
 }

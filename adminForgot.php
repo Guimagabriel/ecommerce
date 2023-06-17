@@ -1,8 +1,5 @@
 <?php
 
-use VirtualStore\PageAdmin;
-use VirtualStore\Models\User;
-
 function adminForgot($vars, $container)
 {
     $page = $container->get(VirtualStore\PageAdmin::class);

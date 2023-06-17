@@ -1,8 +1,5 @@
 <?php
 
-use VirtualStore\PageAdmin;
-use VirtualStore\Models\User;
-
 function renderIndexAdmin($vars, $container)
 {
     VirtualStore\Models\User::verifyLogin();

@@ -1,9 +1,5 @@
 <?php
 
-use VirtualStore\Models\User;
-use VirtualStore\PageAdmin;
-
-
 function adminUsers($vars, $container)
 {
     VirtualStore\Models\User::verifyLogin();
