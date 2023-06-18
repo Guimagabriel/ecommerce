@@ -65,5 +65,31 @@ function adminCategoriesProducts($vars, $container)
     $category = $container->get(VirtualStore\Models\Category::class);
     $category->get((int) $vars['idcategory']);
     $page = $container->get(VirtualStore\PageAdmin::class);
-    $page->renderPage('categories-products', ['category'=>$category->getValues(), 'productsRelated'=>[], 'productsNotRelated'=>[]]);
+    $page->renderPage('categories-products', ['category'=>$category->getValues(), 'productsRelated'=>$category->getProducts(true), 'productsNotRelated'=>$category->getProducts()]);
+}
+
+function adminAddCategoriesProducts($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin();
+    $category = $container->get(VirtualStore\Models\Category::class);
+    $category->get((int) $vars['idcategory']);
+    $product = $container->get(VirtualStore\Models\Product::class);
+    $product->get((int) $vars['idproduct']);
+    $category->addProduct($product);
+
+    header("Location: /admin/categories/".$vars['idcategory']."/products");
+    exit;
+}
+
+function adminRemoveCategoriesProducts($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin();
+    $category = $container->get(VirtualStore\Models\Category::class);
+    $category->get((int) $vars['idcategory']);
+    $product = $container->get(VirtualStore\Models\Product::class);
+    $product->get((int) $vars['idproduct']);
+    $category->removeProduct($product);
+
+    header("Location: /admin/categories/".$vars['idcategory']."/products");
+    exit;
 }

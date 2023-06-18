@@ -3,13 +3,13 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
   <h1>
-    Produtos da Categoria {$category.descategory}
+    Produtos da Categoria <?=$category['descategory']?>
   </h1>
   <ol class="breadcrumb">
     <li><a href="/admin"><i class="fa fa-dashboard"></i> Home</a></li>
     <li><a href="/admin/categories">Categorias</a></li>
-    <li><a href="/admin/categories/{$category.idcategory}">{$category.descategory}</a></li>
-    <li class="active"><a href="/admin/categories/{$category.idcategory}/products">Produtos</a></li>
+    <li><a href="/admin/categories/<?=$category['idcategory']?>"><?=$category['descategory']?></a></li>
+    <li class="active"><a href="/admin/categories/<?=$category['idcategory']?>/products">Produtos</a></li>
   </ol>
 </section>
 
@@ -34,15 +34,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {loop="$productsNotRelated"}
+                            <?php foreach ($productsNotRelated as $productNotRelated):?>
                             <tr>
-                            <td>{$value.idproduct}</td>
-                            <td>{$value.desproduct}</td>
+                            <td><?=$productNotRelated['idproduct']?></td>
+                            <td><?=$productNotRelated['desproduct']?></td>
                             <td>
-                                <a href="/admin/categories/{$category.idcategory}/products/{$value.idproduct}/add" class="btn btn-primary btn-xs pull-right"><i class="fa fa-arrow-right"></i> Adicionar</a>
+                                <a href="/admin/categories/<?=$category['idcategory']?>/products/<?=$productNotRelated['idproduct']?>/add" class="btn btn-primary btn-xs pull-right"><i class="fa fa-arrow-right"></i> Adicionar</a>
                             </td>
                             </tr>
-                            {/loop}
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
@@ -51,7 +51,7 @@
         <div class="col-md-6">
             <div class="box box-success">
                 <div class="box-header with-border">
-                <h3 class="box-title">Produtos na Categoria {$category.descategory}</h3>
+                <h3 class="box-title">Produtos na Categoria <?=$category['descategory']?></h3>
                 </div>
                 <!-- /.box-header -->
                 <!-- form start -->
@@ -65,15 +65,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {loop="$productsRelated"}
+                        <?php foreach ($productsRelated as $productRelated):?>
                             <tr>
-                            <td>{$value.idproduct}</td>
-                            <td>{$value.desproduct}</td>
+                            <td><?=$productRelated['idproduct']?></td>
+                            <td><?=$productRelated['desproduct']?></td>
                             <td>
-                                <a href="/admin/categories/{$category.idcategory}/products/{$value.idproduct}/remove" class="btn btn-primary btn-xs pull-right"><i class="fa fa-arrow-left"></i> Remover</a>
+                                <a href="/admin/categories/<?=$category['idcategory']?>/products/<?=$productRelated['idproduct']?>/remove" class="btn btn-primary btn-xs pull-right"><i class="fa fa-arrow-left"></i> Remover</a>
                             </td>
                             </tr>
-                            {/loop}
+                        <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
