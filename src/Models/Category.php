@@ -2,6 +2,7 @@
 
 namespace VirtualStore\Models;
 use VirtualStore\Model;
+use VirtualStore\Models\Product;
 use VirtualStore\Sql;
 
 class Category extends Model
@@ -24,7 +25,7 @@ class Category extends Model
     Category::updateFile();
   }
 
-  public function get($idcategory) {
+  public function get(int $idcategory) {
     $sql = new Sql();
     $results = $sql->select("SELECT * FROM tb_categories WHERE idcategory = :idcategory", [
       ":idcategory"=>$idcategory
@@ -55,7 +56,7 @@ class Category extends Model
     file_put_contents($_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "categories-menu.php", implode("", $html));
   }
 
-  public function getProducts($related = false)
+  public function getProducts(bool $related = false)
   {
     $sql = new Sql();
 
@@ -78,6 +79,28 @@ class Category extends Model
         ':idcategory'=>$this->getidcategory()
       ]);
     }
+  }
+
+  public function getProductsPage(int $page = 1, int $itemsPerPage = 3)
+  {
+    $start = ($page - 1) * $itemsPerPage;
+
+    $sql = new Sql();
+
+    $results = $sql->select("SELECT SQL_CALC_FOUND_ROWS * FROM tb_products a
+      INNER JOIN tb_productscategories b ON a.idproduct = b.idproduct
+      INNER JOIN tb_categories c ON c.idcategory = b.idcategory
+      WHERE c.idcategory = :idcategory
+      LIMIT $start, $itemsPerPage
+    ", [':idcategory'=>$this->getidcategory()]);
+
+    $resultsTotal = $sql->select("SELECT FOUND_ROWS() AS nrtotal");
+
+    return [
+      'data' => Product::checkList($results),
+      'total' => (int)$resultsTotal[0]['nrtotal'],
+      'pages' => ceil($resultsTotal[0]['nrtotal'] / $itemsPerPage)
+    ];
   }
 
   public function addProduct(Product $product)

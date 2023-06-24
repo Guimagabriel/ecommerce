@@ -42,7 +42,7 @@ function adminPostProductsUpdate($vars, $container)
   $product->get((int) $vars['idproduct']);
   $product->setData($_POST);
   $product->save();
-  $product->checkPhoto();
+  $product->setPhoto($_FILES['file']);  
   
   header("Location: /admin/products");
   exit;

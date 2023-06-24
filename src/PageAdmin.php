@@ -9,7 +9,7 @@ class PageAdmin
 
   private $options;
 
-  public function __construct($options = true)
+  public function __construct(bool $options = true)
   {
     $this->options = $options;
     

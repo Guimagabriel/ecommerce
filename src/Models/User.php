@@ -10,7 +10,7 @@ class User extends Model
 {
   const SESSION = "User";
 
-  public function login($login, $password)
+  public function login(string $login, string $password)
   {
     $sql = new Sql();
 
@@ -35,17 +35,17 @@ class User extends Model
     return $user;
   }
 
-  public static function verifyLogin($inadmin = true)
+  public static function verifyLogin(bool $inadmin = true)
   {
     if (!isset($_SESSION[User::SESSION])
         ||
         !$_SESSION[User::SESSION]
         ||
         !(int)$_SESSION[User::SESSION]["iduser"] > 0
-        || (bool)$_SESSION[User::SESSION]["inadmin"] !== $inadmin) {
+        ||(bool)$_SESSION[User::SESSION]["inadmin"] !== $inadmin) {
       
-        header("Location: /admin/login");
-        exit;
+          header("Location: /admin/login");
+          exit;
     }
   }
 
@@ -75,7 +75,7 @@ class User extends Model
     $this->setData($results[0]);
   }
 
-  public function get($iduser)
+  public function get(int $iduser)
   {
     $sql = new Sql();
     $results = $sql->select("SELECT * FROM tb_users a INNER JOIN tb_persons b USING(idperson) WHERE a.iduser = :iduser",

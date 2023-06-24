@@ -16,7 +16,7 @@ class Page
     echo $this->templates->render('header');
   }
 
-  public function renderPage($name, array $data = [])
+  public function renderPage(string $name, array $data = [])
   {    
     echo $this->templates->render($name, $data);
   }
