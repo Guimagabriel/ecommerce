@@ -31,3 +31,9 @@ function productsDetails($vars, $container) {
     $page = $container->get(VirtualStore\Page::class);
     $page->renderPage('product-detail', ['product' => $product->getValues(), 'categories' => $product->getCategories()]);
 }
+
+function cart($vars, $container){
+    $vars['cart'] = VirtualStore\Models\Cart::getFromSession();
+    $page = $container->get(VirtualStore\Page::class);
+    $page->renderPage('cart');
+}
