@@ -6,6 +6,9 @@ require_once ("dependencies.php");
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/', 'renderIndex');
     $r->addRoute('GET', '/cart', 'cart');
+    $r->addRoute('GET', '/cart/{idproduct}/add', 'cartAddProduct');
+    $r->addRoute('GET', '/cart/{idproduct}/minus', 'cartRemoveProduct');
+    $r->addRoute('GET', '/cart/{idproduct}/remove', 'cartRemoveAllProduct');
     $r->addRoute('GET', '/admin', 'renderIndexAdmin');
     $r->addRoute('GET', '/admin/login', 'renderLoginAdmin');
     $r->addRoute('POST', '/admin/login', 'renderLogin');

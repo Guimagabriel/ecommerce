@@ -37,37 +37,37 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
+                                    <?php foreach ($products as $product): ?>
                                     <tr class="cart_item">
                                         <td class="product-remove">
-                                            <a title="Remove this item" class="remove" href="#">×</a> 
+                                            <a title="Remove this item" class="remove" href="/cart/<?=$product['idproduct']?>/remove">×</a> 
                                         </td>
 
                                         <td class="product-thumbnail">
-                                            <a href="#"><img width="145" height="145" alt="poster_1_up" class="shop_thumbnail" src="/res/site/img/product-thumb-2.jpg"></a>
+                                            <a href="/products/<?=$product['desurl']?>"><img width="145" height="145" alt="poster_1_up" class="shop_thumbnail" src="<?=$product['desphoto']?>"></a>
                                         </td>
 
                                         <td class="product-name">
-                                            <a href="#">Ship Your Idea</a> 
+                                            <a href="/products/<?=$product['desurl']?>"><?php echo $product['desproduct'];?></a> 
                                         </td>
 
                                         <td class="product-price">
-                                            <span class="amount">$700.00</span> 
+                                            <span class="amount">R$ <?php echo formatPrice($product['vlprice']);?></span> 
                                         </td>
 
                                         <td class="product-quantity">
                                             <div class="quantity buttons_added">
-                                                <input type="button" class="minus" value="-" onclick="window.location.href = '#'">
-                                                <input type="number" size="4" class="input-text qty text" title="Qty" value="1" min="0" step="1">
-                                                <input type="button" class="plus" value="+" onclick="window.location.href = '#'">
+                                                <input type="button" class="minus" value="-" onclick="window.location.href = '/cart/<?=$product['idproduct']?>/minus'">
+                                                <input type="number" size="4" class="input-text qty text" title="Qty" value="<?=$product['nrqtd']?>" min="0" step="1">
+                                                <input type="button" class="plus" value="+" onclick="window.location.href = '/cart/<?=$product['idproduct']?>/add'">
                                             </div>
                                         </td>
 
                                         <td class="product-subtotal">
-                                            <span class="amount">$700.00</span> 
+                                            <span class="amount">R$ <?php echo formatPrice($product['vltotal']);?></span> 
                                         </td>
                                     </tr>
-                                    
+                                  <?php endforeach; ?>  
                                 </tbody>
                             </table>
 

@@ -23,7 +23,7 @@ class Sql
 
 	}
 
-	private function setParams($statement, $parameters = array())
+	private function setParams($statement, $parameters = [])
 	{
 
 		foreach ($parameters as $key => $value) {
@@ -41,7 +41,7 @@ class Sql
 
 	}
 
-	public function query($rawQuery, $params = array())
+	public function query($rawQuery, $params = [])
 	{
 
 		$stmt = $this->conn->prepare($rawQuery);

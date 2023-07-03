@@ -25,15 +25,53 @@ function category($vars, $container)
 
 }
 
-function productsDetails($vars, $container) {
+function productsDetails($vars, $container)
+{
     $product = $container->get(VirtualStore\Models\Product::class);
     $product->getFromUrl($vars['desurl']);
     $page = $container->get(VirtualStore\Page::class);
     $page->renderPage('product-detail', ['product' => $product->getValues(), 'categories' => $product->getCategories()]);
 }
 
-function cart($vars, $container){
-    $vars['cart'] = VirtualStore\Models\Cart::getFromSession();
+function cart($vars, $container)
+{
+    $cart = VirtualStore\Models\Cart::getFromSession();
     $page = $container->get(VirtualStore\Page::class);
-    $page->renderPage('cart');
+    $page->renderPage('cart', ['cart' => $cart->getValues(), 'products' => $cart->getProducts()]);
+}
+
+function cartAddProduct($vars, $container)
+{
+    $product = $container->get(VirtualStore\Models\Product::class);
+    $product->get((int) $vars['idproduct']);
+    $cart = VirtualStore\Models\Cart::getFromSession();
+    $qtd = (isset($_GET['qtd'])) ? (int)$_GET['qtd'] : 1;
+    for ($i = 0; $i<$qtd ; $i++) {
+        $cart->addProduct($product);
+    }
+
+    header("Location: /cart");
+    exit;
+}
+
+function cartRemoveProduct($vars, $container)
+{
+    $product = $container->get(VirtualStore\Models\Product::class);
+    $product->get((int) $vars['idproduct']);
+    $cart = VirtualStore\Models\Cart::getFromSession();
+    $cart->removeProduct($product);
+
+    header("Location: /cart");
+    exit;
+}
+
+function cartRemoveAllProduct($vars, $container)
+{
+    $product = $container->get(VirtualStore\Models\Product::class);
+    $product->get((int) $vars['idproduct']);
+    $cart = VirtualStore\Models\Cart::getFromSession();
+    $cart->removeProduct($product, true);
+
+    header("Location: /cart");
+    exit;
 }
