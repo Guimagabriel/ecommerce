@@ -1,6 +1,11 @@
 <?php
 
-function formatPrice(float $vlprice)
+function formatPrice($vlprice)
 {
-  return number_format($vlprice, 2, ",", ".");
+  if($vlprice == 0 || "") {
+    return "0,00";
+  } else {
+  $result = number_format($vlprice, 2, ",", ".");
+  }
+  return $result;
 }

@@ -9,6 +9,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/cart/{idproduct}/add', 'cartAddProduct');
     $r->addRoute('GET', '/cart/{idproduct}/minus', 'cartRemoveProduct');
     $r->addRoute('GET', '/cart/{idproduct}/remove', 'cartRemoveAllProduct');
+    $r->addRoute('POST', '/cart/freight', 'postFreight');
     $r->addRoute('GET', '/admin', 'renderIndexAdmin');
     $r->addRoute('GET', '/admin/login', 'renderLoginAdmin');
     $r->addRoute('POST', '/admin/login', 'renderLogin');
