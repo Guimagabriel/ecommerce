@@ -5,6 +5,10 @@ require_once ("dependencies.php");
 
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/', 'renderIndex');
+    $r->addRoute('GET', '/checkout', 'checkout');
+    $r->addRoute('GET', '/login', 'login');
+    $r->addRoute('POST', '/login', 'loginPost');
+    $r->addRoute('GET', '/logout', 'logout');
     $r->addRoute('GET', '/cart', 'cart');
     $r->addRoute('GET', '/cart/{idproduct}/add', 'cartAddProduct');
     $r->addRoute('GET', '/cart/{idproduct}/minus', 'cartRemoveProduct');
@@ -12,8 +16,8 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('POST', '/cart/freight', 'postFreight');
     $r->addRoute('GET', '/admin', 'renderIndexAdmin');
     $r->addRoute('GET', '/admin/login', 'renderLoginAdmin');
-    $r->addRoute('POST', '/admin/login', 'renderLogin');
-    $r->addRoute('GET', '/admin/logout', 'logout');
+    $r->addRoute('POST', '/admin/login', 'renderPostLoginAdmin');
+    $r->addRoute('GET', '/admin/logout', 'logoutAdmin');
     $r->addRoute('GET', '/admin/users', 'adminUsers');
     $r->addRoute('GET', '/admin/users/create', 'adminUsersCreate');
     $r->addRoute('POST', '/admin/users/create', 'adminPostUsersCreate');

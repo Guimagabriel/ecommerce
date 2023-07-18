@@ -14,7 +14,7 @@ function renderLoginAdmin($vars, $container)
     $page->renderPage('login');
 }
 
-function renderLogin($vars, $container)
+function renderPostLoginAdmin($vars, $container)
 {
     $user = $container->get(VirtualStore\Models\User::class);
     $user->login($_POST['login'], $_POST['password']);
@@ -23,7 +23,7 @@ function renderLogin($vars, $container)
     exit;
 }
 
-function logout($vars, $container)
+function logoutAdmin($vars, $container)
 {
     VirtualStore\Models\User::logout();
 

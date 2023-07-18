@@ -85,3 +85,40 @@ function postFreight($vars, $container)
     header("Location: /cart");
     exit;
 }
+
+function checkout($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin(false);
+    $cart = VirtualStore\Models\Cart::getFromSession();
+    $address = $container->get(VirtualStore\Models\Address::class);
+    $page = $container->get(VirtualStore\Page::class);
+    $page->renderPage('checkout', ['cart' => $cart->getValues(), 'address' => $address->getValues()]);
+}
+
+function login($vars, $container)
+{
+    $page = $container->get(VirtualStore\Page::class);
+    $page->renderPage('Login', ['error' => VirtualStore\Models\User::getError()]);
+}
+
+function loginPost($vars, $container)
+{
+    $user = $container->get(VirtualStore\Models\User::class);
+
+    try {
+        $user->login($_POST['login'], $_POST['password']);
+    } catch(Exception $e) {
+        VirtualStore\Models\User::setError($e->getMessage());    
+    }
+    
+    header("Location: /checkout");
+    exit;
+}
+
+function logout($vars, $container)
+{
+    VirtualStore\Models\User::logout();
+
+    header("Location: /login");
+    exit;
+}
