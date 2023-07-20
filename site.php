@@ -98,7 +98,11 @@ function checkout($vars, $container)
 function login($vars, $container)
 {
     $page = $container->get(VirtualStore\Page::class);
-    $page->renderPage('Login', ['error' => VirtualStore\Models\User::getError()]);
+    $page->renderPage('Login', [
+        'error' => VirtualStore\Models\User::getError(),
+        'errorRegister' => VirtualStore\Models\User::getErrorRegister(),
+        'registerValues' => (isset($_SESSION['registerValues']) ? $_SESSION['registerValues'] : ['name'=>'', 'email'=>'', 'phone'=>''])
+    ]);
 }
 
 function loginPost($vars, $container)
@@ -106,13 +110,63 @@ function loginPost($vars, $container)
     $user = $container->get(VirtualStore\Models\User::class);
 
     try {
-        $user->login($_POST['login'], $_POST['password']);
+        VirtualStore\Models\User::login($_POST['login'], $_POST['password']);
     } catch(Exception $e) {
         VirtualStore\Models\User::setError($e->getMessage());    
     }
     
     header("Location: /checkout");
     exit;
+}
+
+function createPost($vars, $container)
+{
+    $_SESSION['registerValues'] = $_POST;
+
+    if(!isset($_POST['name']) || $_POST['name'] == '') {
+
+        VirtualStore\Models\User::setErrorRegister("Preencha o seu nome.");
+        header("Location: /login");
+        exit;
+    }
+
+    if(!isset($_POST['email']) || $_POST['email'] == '') {
+
+        VirtualStore\Models\User::setErrorRegister("Preencha o email.");
+        header("Location: /login");
+        exit;
+    }
+
+    if(!isset($_POST['password']) || $_POST['password'] == '') {
+
+        VirtualStore\Models\User::setErrorRegister("Preencha a senha.");
+        header("Location: /login");
+        exit;
+    }
+
+    if(VirtualStore\Models\User::checkLoginExist($_POST['email']) === true) {
+
+        VirtualStore\Models\User::setErrorRegister("Este email já existe.");
+        header("Location: /login");
+        exit;
+    }
+    
+
+    $user = $container->get(VirtualStore\Models\User::class);
+    $user->setData(['inadmin' => 0,
+        'deslogin' => $_POST['email'],
+        'desemail' => $_POST['email'],
+        'despassword' => $_POST['password'],
+        'desperson' => $_POST['name'],
+        'nrphone' => $_POST['phone']
+    ]);
+
+    $user->save();
+    VirtualStore\Models\User::login($_POST['email'], $_POST['password']);
+
+    header("Location: /checkout");
+    exit;
+
 }
 
 function logout($vars, $container)
