@@ -24,7 +24,7 @@
                 <form action="/login" id="login-form-wrap" class="login" method="post">
                     <h2>Acessar</h2>
                     <p class="form-row form-row-first">
-                        <label for="login">Usuário <span class="required">*</span>
+                        <label for="login">Email <span class="required">*</span>
                         </label>
                         <input type="text" id="login" name="login" class="input-text">
                     </p>

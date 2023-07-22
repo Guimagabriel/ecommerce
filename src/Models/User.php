@@ -12,7 +12,7 @@ class User extends Model
   const ERROR = "UserError";
   const ERROR_REGISTER = "UserErrorRegister";
 
-  public static function login(string $login, string $password)
+  public static function login($login, $password)
   {
     $sql = new Sql();
 
@@ -101,7 +101,7 @@ class User extends Model
     $sql = new Sql();
     $results = $sql->select("CALL sp_users_save(:desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)", [
       ":desperson" => utf8_decode($this->getdesperson()),
-      ":deslogin" => $this->getdeslogin(),
+      ":deslogin" => $this->getdesemail(),
       ":despassword" => User::getPasswordHash($this->getdespassword()),
       ":desemail" => $this->getdesemail(),
       ":nrphone" => $this->getnrphone(),
@@ -121,7 +121,7 @@ class User extends Model
 
     $data['desperson'] = utf8_encode($data['desperson']);
   
-    $this->setData($data);
+    return $this->setData($data);
   }
 
   public function update()
@@ -130,8 +130,8 @@ class User extends Model
     $results = $sql->select("CALL sp_usersupdate_save(:iduser, :desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)", [
       ":iduser" => $this->getiduser(),
       ":desperson" => utf8_decode($this->getdesperson()),
-      ":deslogin" => $this->getdeslogin(),
-      ":despassword" => User::getPasswordHash($this->getdespassword()),
+      ":deslogin" => $this->getdesemail(),
+      ":despassword" => $this->getdespassword(),
       ":desemail" => $this->getdesemail(),
       ":nrphone" => $this->getnrphone(),
       ":inadmin" => $this->getinadmin()
@@ -187,7 +187,7 @@ class User extends Model
 
   public static function getPasswordHash($password)
   {
-      return password_hash($password, PASSWORD_DEFAULT, ['cost' => 12]);
+      return password_hash($password, PASSWORD_DEFAULT);
   }
 
   public static function setErrorRegister($msg)
@@ -215,4 +215,15 @@ class User extends Model
 
     return (count($results) > 0);
   }
+
+  public static function updateSessionData(int $iduser)
+  {
+    $user = new User();
+    $userData = $user->get($iduser);
+
+    if ($userData) {
+      $_SESSION[User::SESSION] = $userData;
+    }
+  }
+
 }

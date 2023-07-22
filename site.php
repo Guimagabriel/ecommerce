@@ -98,7 +98,7 @@ function checkout($vars, $container)
 function login($vars, $container)
 {
     $page = $container->get(VirtualStore\Page::class);
-    $page->renderPage('Login', [
+    $page->renderPage('login', [
         'error' => VirtualStore\Models\User::getError(),
         'errorRegister' => VirtualStore\Models\User::getErrorRegister(),
         'registerValues' => (isset($_SESSION['registerValues']) ? $_SESSION['registerValues'] : ['name'=>'', 'email'=>'', 'phone'=>''])
@@ -107,12 +107,10 @@ function login($vars, $container)
 
 function loginPost($vars, $container)
 {
-    $user = $container->get(VirtualStore\Models\User::class);
-
     try {
         VirtualStore\Models\User::login($_POST['login'], $_POST['password']);
     } catch(Exception $e) {
-        VirtualStore\Models\User::setError($e->getMessage());    
+        VirtualStore\Models\User::setError($e->getMessage());
     }
     
     header("Location: /checkout");
@@ -164,7 +162,7 @@ function createPost($vars, $container)
     $user->save();
     VirtualStore\Models\User::login($_POST['email'], $_POST['password']);
 
-    header("Location: /checkout");
+    header("Location: /cart");
     exit;
 
 }
@@ -174,5 +172,60 @@ function logout($vars, $container)
     VirtualStore\Models\User::logout();
 
     header("Location: /login");
+    exit;
+}
+
+function profile($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin(false);
+    $user = VirtualStore\Models\User::getFromSession();
+    $page = $container->get(VirtualStore\Page::class);
+    $page->renderPage('profile', ['user' => $user->getValues(), 'message' => VirtualStore\Message::getMessage()]);
+    VirtualStore\Message::clearMessage();
+    
+}
+
+function profilePost($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin(false);
+
+    if(!isset($_POST['desperson']) || $_POST['desperson'] === "") {
+        VirtualStore\Message::setMessage("Preencha o seu nome!", "error");
+
+        header("Location: /profile");
+        exit;
+    }
+
+    if(!isset($_POST['desemail']) || $_POST['desemail'] === "") {
+        VirtualStore\Message::setMessage("Preencha o seu email!", "error");
+
+        header("Location: /profile");
+        exit;
+    }
+
+    $user = VirtualStore\Models\User::getFromSession();
+
+    if($_POST['desemail'] !== $user->getdesemail()) {
+
+        if(VirtualStore\Models\User::checkLoginExist($_POST['desemail'])) {
+
+            VirtualStore\Message::setMessage("Este email já está cadastrado!", "error");
+
+            header("Location: /profile");
+            exit;
+        }
+    }    
+
+    $_POST['inadmin'] = $user->getinadmin();
+    $_POST['despassword'] = $user->getdespassword();
+    $_POST['deslogin'] = $_POST['desemail'];
+
+    $user->setData($_POST);
+    $user->update();
+    
+    VirtualStore\Models\User::updateSessionData($user->getiduser());
+    VirtualStore\Message::setMessage("Dados alterados com sucesso!", "success");
+
+    header("Location: /profile");
     exit;
 }
