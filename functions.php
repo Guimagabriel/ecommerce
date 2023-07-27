@@ -23,3 +23,19 @@ function getUserName()
 
   return $user->getdesperson();  
 }
+
+function getCartNrQtd()
+{
+  $cart = VirtualStore\Models\Cart::getFromSession();
+  $totals = $cart->getProductsTotals();
+
+  return $totals['nrqtd'];
+}
+
+function getCartSubTotal()
+{
+  $cart = VirtualStore\Models\Cart::getFromSession();
+  $totals = $cart->getProductsTotals();
+
+  return formatPrice($totals['vlprice']);
+}

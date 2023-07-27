@@ -10,6 +10,7 @@ require_once ("adminForgot.php");
 require_once ("adminProducts.php");
 require_once("siteCart.php");
 require_once("siteUsers.php");
+require_once("sitePayments.php");
 
 
 $container = new DI\Container();
