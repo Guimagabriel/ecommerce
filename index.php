@@ -10,6 +10,8 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('POST', '/register', 'createPost');
     $r->addRoute('GET', '/profile', 'profile');
     $r->addRoute('POST', '/profile', 'profilePost');
+    $r->addRoute('GET', '/order/{idorder}', 'order');
+    $r->addRoute('GET', '/boleto/{idorder}', 'boleto');
     $r->addRoute('GET', '/logout', 'logout');
     $r->addRoute('GET', '/checkout', 'checkout');
     $r->addRoute('POST', '/checkout', 'checkoutPost');

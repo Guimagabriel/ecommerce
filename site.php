@@ -33,59 +33,6 @@ function productsDetails($vars, $container)
     $page->renderPage('product-detail', ['product' => $product->getValues(), 'categories' => $product->getCategories()]);
 }
 
-function cart($vars, $container)
-{
-    $cart = VirtualStore\Models\Cart::getFromSession();
-    $error = VirtualStore\Models\Cart::getMsgError();
-    $page = $container->get(VirtualStore\Page::class);
-    $page->renderPage('cart', ['cart' => $cart->getValues(), 'products' => $cart->getProducts(), 'error' => $error]);
-}
-
-function cartAddProduct($vars, $container)
-{
-    $product = $container->get(VirtualStore\Models\Product::class);
-    $product->get((int) $vars['idproduct']);
-    $cart = VirtualStore\Models\Cart::getFromSession();
-    $qtd = (isset($_GET['qtd'])) ? (int)$_GET['qtd'] : 1;
-    for ($i = 0; $i<$qtd ; $i++) {
-        $cart->addProduct($product);
-    }
-
-    header("Location: /cart");
-    exit;
-}
-
-function cartRemoveProduct($vars, $container)
-{
-    $product = $container->get(VirtualStore\Models\Product::class);
-    $product->get((int) $vars['idproduct']);
-    $cart = VirtualStore\Models\Cart::getFromSession();
-    $cart->removeProduct($product);
-
-    header("Location: /cart");
-    exit;
-}
-
-function cartRemoveAllProduct($vars, $container)
-{
-    $product = $container->get(VirtualStore\Models\Product::class);
-    $product->get((int) $vars['idproduct']);
-    $cart = VirtualStore\Models\Cart::getFromSession();
-    $cart->removeProduct($product, true);
-
-    header("Location: /cart");
-    exit;
-}
-
-function postFreight($vars, $container)
-{
-    $cart = VirtualStore\Models\Cart::getFromSession();
-    $cart->setFreight($_POST['zipcode']);
-    
-    header("Location: /cart");
-    exit;
-}
-
 function checkout($vars, $container)
 {
     VirtualStore\Models\User::verifyLogin(false);
@@ -110,9 +57,6 @@ function checkout($vars, $container)
     if (!$address->getdescountry()) $address->setdescountry('');
     if (!$address->getdeszipcode()) $address->setdeszipcode('');
 
-    //if (isset($_GET['zipcode'])) {
-
-    //}
 
     $page = $container->get(VirtualStore\Page::class);
     $page->renderPage('checkout', ['cart' => $cart->getValues(), 'address' => $address->getValues(), 'products' => $cart->getProducts(), 'error' => VirtualStore\Message::getMessage()]);
@@ -151,141 +95,99 @@ function checkoutPost($vars, $container) {
     $address->setData($_POST);
     $address->save();
 
-    header("Location: /order");
+    $cart = VirtualStore\Models\Cart::getFromSession();   
+    $values = $cart->getValues();
+    $total = $values['vltotal'];
+
+    $order = $container->get(VirtualStore\Models\Order::class);
+    $order->setData([
+        'idcart' => $cart->getidcart(),
+        'idaddress' => $address->getidaddress(),
+        'iduser' => $user->getiduser(),
+        'idstatus' => VirtualStore\Models\OrderStatus::EM_ABERTO,
+        'vltotal' => $total
+    ]);
+
+    $order->save();
+
+    header("Location: /order/".$order->getidorder());
     exit;    
 }
 
-function login($vars, $container)
-{
-    $page = $container->get(VirtualStore\Page::class);
-    $page->renderPage('login', [
-        'error' => VirtualStore\Models\User::getError(),
-        'errorRegister' => VirtualStore\Models\User::getErrorRegister(),
-        'registerValues' => (isset($_SESSION['registerValues']) ? $_SESSION['registerValues'] : ['name'=>'', 'email'=>'', 'phone'=>''])
-    ]);
-}
-
-function loginPost($vars, $container)
-{
-    try {
-        VirtualStore\Models\User::login($_POST['login'], $_POST['password']);
-    } catch(Exception $e) {
-        VirtualStore\Models\User::setError($e->getMessage());
-    }
-    
-    header("Location: /checkout");
-    exit;
-}
-
-function createPost($vars, $container)
-{
-    $_SESSION['registerValues'] = $_POST;
-
-    if(!isset($_POST['name']) || $_POST['name'] == '') {
-
-        VirtualStore\Models\User::setErrorRegister("Preencha o seu nome.");
-        header("Location: /login");
-        exit;
-    }
-
-    if(!isset($_POST['email']) || $_POST['email'] == '') {
-
-        VirtualStore\Models\User::setErrorRegister("Preencha o email.");
-        header("Location: /login");
-        exit;
-    }
-
-    if(!isset($_POST['password']) || $_POST['password'] == '') {
-
-        VirtualStore\Models\User::setErrorRegister("Preencha a senha.");
-        header("Location: /login");
-        exit;
-    }
-
-    if(VirtualStore\Models\User::checkLoginExist($_POST['email']) === true) {
-
-        VirtualStore\Models\User::setErrorRegister("Este email já existe.");
-        header("Location: /login");
-        exit;
-    }
-    
-
-    $user = $container->get(VirtualStore\Models\User::class);
-    $user->setData(['inadmin' => 0,
-        'deslogin' => $_POST['email'],
-        'desemail' => $_POST['email'],
-        'despassword' => $_POST['password'],
-        'desperson' => $_POST['name'],
-        'nrphone' => $_POST['phone']
-    ]);
-
-    $user->save();
-    VirtualStore\Models\User::login($_POST['email'], $_POST['password']);
-
-    header("Location: /cart");
-    exit;
-
-}
-
-function logout($vars, $container)
-{
-    VirtualStore\Models\User::logout();
-
-    header("Location: /login");
-    exit;
-}
-
-function profile($vars, $container)
-{
-    VirtualStore\Models\User::verifyLogin(false);
-    $user = VirtualStore\Models\User::getFromSession();
-    $page = $container->get(VirtualStore\Page::class);
-    $page->renderPage('profile', ['user' => $user->getValues(), 'message' => VirtualStore\Message::getMessage()]);
-    VirtualStore\Message::clearMessage();
-    
-}
-
-function profilePost($vars, $container)
+function order($vars, $container)
 {
     VirtualStore\Models\User::verifyLogin(false);
 
-    if(!isset($_POST['desperson']) || $_POST['desperson'] === "") {
-        VirtualStore\Message::setMessage("Preencha o seu nome!", "error");
+    $order = $container->get(VirtualStore\Models\Order::class);
+    $order->get((int)$vars['idorder']);
 
-        header("Location: /profile");
-        exit;
-    }
+    $page = $container->get(VirtualStore\Page::class);
+    $page->renderPage('payment', ['order' => $order->getValues()]);
+}
 
-    if(!isset($_POST['desemail']) || $_POST['desemail'] === "") {
-        VirtualStore\Message::setMessage("Preencha o seu email!", "error");
+function boleto($vars, $container)
+{   
+    VirtualStore\Models\User::verifyLogin(false);
+    $order = $container->get(VirtualStore\Models\Order::class);
+    $order->get((int)$vars['idorder']);    
 
-        header("Location: /profile");
-        exit;
-    }
+    // DADOS DO BOLETO PARA O SEU CLIENTE
+    $dias_de_prazo_para_pagamento = 10;
+    $taxa_boleto = 5.00;
+    $data_venc = date("d/m/Y", time() + ($dias_de_prazo_para_pagamento * 86400));  // Prazo de X dias OU informe data: "13/04/2006"; 
+    $valor_cobrado = $order->getvltotal(); // Valor - REGRA: Sem pontos na milhar e tanto faz com "." ou "," ou com 1 ou 2 ou sem casa decimal
+    $valor_cobrado = str_replace(",", ".",$valor_cobrado);
+    $valor_boleto = number_format($valor_cobrado+$taxa_boleto, 2, ',', '');
 
-    $user = VirtualStore\Models\User::getFromSession();
+    $dadosboleto["nosso_numero"] = $order->getidorder();  // Nosso numero - REGRA: Máximo de 8 caracteres!
+    $dadosboleto["numero_documento"] = $order->getidorder();	// Num do pedido ou nosso numero
+    $dadosboleto["data_vencimento"] = $data_venc; // Data de Vencimento do Boleto - REGRA: Formato DD/MM/AAAA
+    $dadosboleto["data_documento"] = date("d/m/Y"); // Data de emissão do Boleto
+    $dadosboleto["data_processamento"] = date("d/m/Y"); // Data de processamento do boleto (opcional)
+    $dadosboleto["valor_boleto"] = $valor_boleto; 	// Valor do Boleto - REGRA: Com vírgula e sempre com duas casas depois da virgula
 
-    if($_POST['desemail'] !== $user->getdesemail()) {
+    // DADOS DO SEU CLIENTE
+    $dadosboleto["sacado"] = $order->getdesperson();
+    $dadosboleto["endereco1"] = $order->getdesaddress() ." - ". $order->getdesdistrict();
+    $dadosboleto["endereco2"] = $order->getdescity()." - ".$order->getdesstate().' - '. "CEP: ".$order->getdeszipcode();
 
-        if(VirtualStore\Models\User::checkLoginExist($_POST['desemail'])) {
+    // INFORMACOES PARA O CLIENTE
+    $dadosboleto["demonstrativo1"] = "Pagamento de Compra na Loja Hcode E-commerce";
+    $dadosboleto["demonstrativo2"] = "Taxa bancária - R$ 0,00";
+    $dadosboleto["demonstrativo3"] = "";
+    $dadosboleto["instrucoes1"] = "- Sr. Caixa, cobrar multa de 2% após o vencimento";
+    $dadosboleto["instrucoes2"] = "- Receber até 10 dias após o vencimento";
+    $dadosboleto["instrucoes3"] = "- Em caso de dúvidas entre em contato conosco: suporte@hcode.com.br";
+    $dadosboleto["instrucoes4"] = "&nbsp; Emitido pelo sistema Projeto Loja Hcode E-commerce - www.hcode.com.br";
 
-            VirtualStore\Message::setMessage("Este email já está cadastrado!", "error");
+    // DADOS OPCIONAIS DE ACORDO COM O BANCO OU CLIENTE
+    $dadosboleto["quantidade"] = "";
+    $dadosboleto["valor_unitario"] = "";
+    $dadosboleto["aceite"] = "";		
+    $dadosboleto["especie"] = "R$";
+    $dadosboleto["especie_doc"] = "";
 
-            header("Location: /profile");
-            exit;
-        }
-    }    
 
-    $_POST['inadmin'] = $user->getinadmin();
-    $_POST['despassword'] = $user->getdespassword();
-    $_POST['deslogin'] = $_POST['desemail'];
+    // ---------------------- DADOS FIXOS DE CONFIGURAÇÃO DO SEU BOLETO --------------- //
 
-    $user->setData($_POST);
-    $user->update();
 
-    VirtualStore\Models\User::updateSessionData($user->getiduser());
-    VirtualStore\Message::setMessage("Dados alterados com sucesso!", "success");
+    // DADOS DA SUA CONTA - ITAÚ
+    $dadosboleto["agencia"] = "1690"; // Num da agencia, sem digito
+    $dadosboleto["conta"] = "48781";	// Num da conta, sem digito
+    $dadosboleto["conta_dv"] = "2"; 	// Digito do Num da conta
 
-    header("Location: /profile");
-    exit;
+    // DADOS PERSONALIZADOS - ITAÚ
+    $dadosboleto["carteira"] = "175";  // Código da Carteira: pode ser 175, 174, 104, 109, 178, ou 157
+
+    // SEUS DADOS
+    $dadosboleto["identificacao"] = "Virtual Store";
+    $dadosboleto["cpf_cnpj"] = "00.000.000/0000-00";
+    $dadosboleto["endereco"] = "Rua teste - Alvarenga, 00000-000";
+    $dadosboleto["cidade_uf"] = "Rio de Janeiro - RJ";
+    $dadosboleto["cedente"] = "Virtual Store";
+
+    // NÃO ALTERAR!
+    $path = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . "res" . DIRECTORY_SEPARATOR . "boletophp" . DIRECTORY_SEPARATOR;
+    require_once($path . "include/funcoes_itau.php"); 
+    require_once($path . "include/layout_itau.php");
 }
