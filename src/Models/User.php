@@ -131,7 +131,7 @@ class User extends Model
       ":iduser" => $this->getiduser(),
       ":desperson" => utf8_decode($this->getdesperson()),
       ":deslogin" => $this->getdesemail(),
-      ":despassword" => $this->getdespassword(),
+      ":despassword" => User::getPasswordHash($this->getdespassword()),
       ":desemail" => $this->getdesemail(),
       ":nrphone" => $this->getnrphone(),
       ":inadmin" => $this->getinadmin()

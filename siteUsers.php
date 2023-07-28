@@ -18,7 +18,7 @@ function loginPost($vars, $container)
         VirtualStore\Models\User::setError($e->getMessage());
     }
     
-    header("Location: /checkout");
+    header("Location: /");
     exit;
 }
 
@@ -86,7 +86,6 @@ function profile($vars, $container)
     $user = VirtualStore\Models\User::getFromSession();
     $page = $container->get(VirtualStore\Page::class);
     $page->renderPage('profile', ['user' => $user->getValues(), 'message' => VirtualStore\Message::getMessage()]);
-    VirtualStore\Message::clearMessage();
     
 }
 
@@ -133,4 +132,71 @@ function profilePost($vars, $container)
 
     header("Location: /profile");
     exit;
+}
+
+function changePassword($vars, $container)
+{   
+    VirtualStore\Models\User::verifyLogin(false);
+    $page = $container->get(VirtualStore\Page::class);
+    $page->renderPage("profile-change-password", ['error' => VirtualStore\Message::getMessage()]);
+}
+
+function changePasswordPost($vars, $container)
+{
+    VirtualStore\Models\User::verifyLogin(false);
+
+    if(!isset($_POST['current_pass']) || $_POST['current_pass'] === '') {
+        VirtualStore\Message::setMessage("Digite a senha atual", "error");
+
+        header("Location: /profile/change-password");
+        exit;
+    }
+
+    if(!isset($_POST['new_pass']) || $_POST['new_pass'] === '') {
+        VirtualStore\Message::setMessage("Digite a nova senha", "error");
+
+        header("Location: /profile/change-password");
+        exit;
+    }
+
+    if(!isset($_POST['new_pass_confirm']) || $_POST['new_pass_confirm'] === '') {
+        VirtualStore\Message::setMessage("Confirme a nova senha", "error");
+
+        header("Location: /profile/change-password");
+        exit;
+    }
+
+    if($_POST['current_pass'] === $_POST['new_pass']) {
+        VirtualStore\Message::setMessage("A senha deve ser diferente da atual", "error");
+
+        header("Location: /profile/change-password");
+        exit;
+    }
+
+    if($_POST['new_pass'] != $_POST['new_pass_confirm']) {
+        VirtualStore\Message::setMessage("As novas senhas devem coincidir", "error");
+
+        header("Location: /profile/change-password");
+        exit;
+    }
+
+
+
+    $user = VirtualStore\Models\User::getFromSession();
+    if(!password_verify($_POST['current_pass'], $user->getdespassword())) {
+        VirtualStore\Message::setMessage("Senha inválida", "error");
+
+        header("Location: /profile/change-password");
+        exit;
+    }
+
+    $user->setdespassword($_POST['new_pass']);
+    $user->update();
+
+    VirtualStore\Message::setMessage("Senha alterada com sucesso", "success");
+
+    header("Location: /profile/change-password");
+    exit;
+    
+
 }
