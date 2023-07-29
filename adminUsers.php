@@ -3,9 +3,33 @@
 function adminUsers($vars, $container)
 {
     VirtualStore\Models\User::verifyLogin();
-    $vars['users'] = VirtualStore\Models\User::listAll();
-    $page = $container->get(VirtualStore\PageAdmin::class);
-    $page->renderPage('users', $vars);
+    
+    $search = (isset($_GET['search']) ? $_GET['search'] : '');
+    $page = (isset($_GET['page']) ? (int)$_GET['page'] : 1);
+
+    if($search != '') {
+        $pagination = VirtualStore\Models\User::getPageSearch($search, $page);
+    } else {
+        $pagination = VirtualStore\Models\User::getPage($page);
+    }
+
+    
+    $pages = [];
+
+    for ($i = 0; $i < $pagination['pages']; $i++) {
+        array_push($pages, [
+            'href'=>'/admin/users?'.http_build_query([
+                'page'=>$i+1,
+                'search'=>$search
+            ]),
+            'text'=>$i+1
+        ]);
+    }
+
+    $vars['users'] = $pagination['data'];
+    $vars['pages'] = $pages;
+    $pageAdmin = $container->get(VirtualStore\PageAdmin::class);
+    $pageAdmin->renderPage('users', ['users'=>$vars['users'], 'pages'=>$vars['pages'], 'search'=>$search]);
 }
 
 function adminUsersCreate($vars, $container)
