@@ -75,6 +75,8 @@ function createPost($vars, $container)
 function logout($vars, $container)
 {
     VirtualStore\Models\User::logout();
+    $cart = VirtualStore\Models\Cart::getFromSession();
+    $cart->clearCart();
 
     header("Location: /login");
     exit;

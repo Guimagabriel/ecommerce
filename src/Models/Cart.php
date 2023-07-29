@@ -11,33 +11,32 @@ class Cart extends Model
   const SESSION_ERROR = "CartError";
 
   public static function getFromSession()
-  {
+{
     $cart = new Cart();
 
-    if (isset($_SESSION[Cart::SESSION]) && (int)$_SESSION[Cart::SESSION]['idcart'] > 0) {
-
-      $cart->getCart((int)$_SESSION[Cart::SESSION]['idcart']);
-
+    if (isset($_SESSION[Cart::SESSION]) && is_array($_SESSION[Cart::SESSION]) && isset($_SESSION[Cart::SESSION]['idcart']) && (int)$_SESSION[Cart::SESSION]['idcart'] > 0) {
+        $cartId = (int)$_SESSION[Cart::SESSION]['idcart'];
+        $cart->getCart($cartId);
     } else {
-      $cart->getFromSessionId();
-      
-      if(!(int)$cart->getidcart > 0) {
-        $data = ['dessessionid' => session_id()];
+        $cart->getFromSessionId();
 
-        if (User::checkLogin(false)) {
-          $user = User::getFromSession();
-          $data['iduser'] = $user->getiduser();
+        if (!(int)$cart->getidcart() > 0) {
+            $data = ['dessessionid' => session_id()];
+
+            if (User::checkLogin(false)) {
+                $user = User::getFromSession();
+                $data['iduser'] = $user->getiduser();
+            }
+
+            $cart->setData($data);
+            $cart->save();
+            $cart->setToSession();
         }
-        
-        $cart->setData($data);
-        $cart->save();
-        $cart->setToSession();
-        
-      }
     }
 
     return $cart;
-  }
+}
+
 
   public function setToSession()
   {
@@ -255,4 +254,10 @@ class Cart extends Model
     $this->setvlsubtotal($totals['vlprice']);
     $this->setvltotal($totals['vlprice'] + $this->getvlfreight());
   }
+
+  public function clearCart()
+{
+  $_SESSION[Cart::SESSION] = 0;
+}
+
 }
