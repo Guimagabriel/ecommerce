@@ -3,9 +3,32 @@
 function adminProducts($vars, $container)
 {
   VirtualStore\Models\User::verifyLogin();
+
+  $search = (isset($_GET['search']) ? $_GET['search'] : '');
+    $page = (isset($_GET['page']) ? (int)$_GET['page'] : 1);
+
+    if($search != '') {
+        $pagination = VirtualStore\Models\Product::getPageSearch($search, $page);
+    } else {
+        $pagination = VirtualStore\Models\Product::getPage($page);
+    }
+
+    
+    $pages = [];
+
+    for ($i = 0; $i < $pagination['pages']; $i++) {
+        array_push($pages, [
+            'href'=>'/admin/products?'.http_build_query([
+                'page'=>$i+1,
+                'search'=>$search
+            ]),
+            'text'=>$i+1
+        ]);
+    }
+
   $vars['products'] = VirtualStore\Models\Product::listAll();
   $page = $container->get(VirtualStore\PageAdmin::class);
-  $page->renderPage('products', $vars);
+  $page->renderPage('products', ['products'=>$pagination['data'], 'pages'=>$pages, 'search'=>$search]);
 }
 
 function adminProductsCreate($vars, $container)

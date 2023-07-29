@@ -26,10 +26,9 @@ function adminUsers($vars, $container)
         ]);
     }
 
-    $vars['users'] = $pagination['data'];
     $vars['pages'] = $pages;
     $pageAdmin = $container->get(VirtualStore\PageAdmin::class);
-    $pageAdmin->renderPage('users', ['users'=>$vars['users'], 'pages'=>$vars['pages'], 'search'=>$search]);
+    $pageAdmin->renderPage('users', ['users'=>$pagination['data'], 'pages'=>$vars['pages'], 'search'=>$search]);
 }
 
 function adminUsersCreate($vars, $container)
