@@ -52,8 +52,12 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('POST', '/admin/products/create', 'adminPostProductsCreate');
     $r->addRoute('GET', '/admin/products/{idproduct}', 'adminProductsUpdate');
     $r->addRoute('POST', '/admin/products/{idproduct}', 'adminPostProductsUpdate');
-    $r->addRoute('GET', '/admin/products/{idproduct}/delete', 'adminDeleteProducts');    
-    
+    $r->addRoute('GET', '/admin/products/{idproduct}/delete', 'adminDeleteProducts'); 
+    $r->addRoute('GET', '/admin/orders', 'adminOrder');
+    $r->addRoute('GET', '/admin/orders/{idorder}', 'adminOrderDetails');
+    $r->addRoute('GET', '/admin/orders/{idorder}/delete', 'adminOrderDelete');
+    $r->addRoute('GET', '/admin/orders/{idorder}/status', 'adminOrderStatus');
+    $r->addRoute('POST', '/admin/orders/{idorder}/status', 'adminPostOrderStatus');
 });
 
 $httpMethod = $_SERVER['REQUEST_METHOD'];

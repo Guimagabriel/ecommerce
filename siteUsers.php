@@ -6,7 +6,7 @@ function login($vars, $container)
     $page->renderPage('login', [
         'error' => VirtualStore\Models\User::getError(),
         'errorRegister' => VirtualStore\Models\User::getErrorRegister(),
-        'registerValues' => (isset($_SESSION['registerValues']) ? $_SESSION['registerValues'] : ['name'=>'', 'email'=>'', 'phone'=>''])
+        'registerValues' => (['name'=>'', 'email'=>'', 'phone'=>''])
     ]);
 }
 
